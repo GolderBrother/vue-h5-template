@@ -46,7 +46,7 @@
 
 ```sh
 # 克隆项目
-git clone https://github.com/push-over/vue-h5-template.git
+git clone https://github.com/GolderBrother/vue-h5-template.git
 
 # 进入项目目录
 cd vue-h5-template
