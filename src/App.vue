@@ -1,0 +1,63 @@
+<template>
+  <div id="app">
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <ServiceWorkerUpdatePopup/>
+  </div>
+</template>
+
+<script>
+import ServiceWorkerUpdatePopup from '@/pwa/components/ServiceWorkerUpdatePopup.vue'
+export default {
+  name: 'App',
+  components: {
+    ServiceWorkerUpdatePopup,
+  },
+  provide() {
+    return {
+      reload: this.reload,
+    }
+  },
+  created() {
+    console.log(`created`)
+    this.handleFocusOut()
+    this.handleResize()
+  },
+  methods: {
+    reload() {
+      this.isRouterAlive = false
+      this.$nextTick(() => {
+        this.isRouterAlive = true
+      })
+    },
+    handleFocusOut() {
+      document.addEventListener('focusout', () => {
+        document.body.scrollTop = 0
+      })
+    },
+    handleResize() {
+      const clientHeight = document.documentElement.clientHeight
+      const resizeHandler = () => {
+        const tagName = document.activeElement.tagName
+        if (tagName) {
+          const inputBox = tagName === 'INPUT' || tagName === 'TEXTAREA'
+          if (inputBox) {
+            setTimeout(() => {
+              document.activeElement.scrollIntoView()
+            }, 0)
+          }
+        }
+        const bodyHeight = document.documentElement.clientHeight
+        const ele = document.getElementById('fixed-bottom')
+        if (ele) {
+          if (clientHeight > bodyHeight) ele.style.display = 'none'
+          else ele.style.display = 'block'
+        }
+      }
+      window.addEventListener('resize', resizeHandler)
+    },
+  },
+}
+</script>
